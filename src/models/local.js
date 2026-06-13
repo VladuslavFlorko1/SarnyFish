@@ -37,7 +37,7 @@ const locationSchema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: ['river', 'sea', 'lake', 'pond', 'reservoir'],
+      enum: ['річка', 'озеро', 'струмок', 'басейн','ставок', 'інше'],
     },
   },
   {
