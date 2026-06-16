@@ -2,13 +2,28 @@ import { Location } from '../models/local.js';
 import createHttpError from 'http-errors'
 
 export const getLocations = async (req, res) => {
-  console.log('DB:', Location.db.name);
+  const { page = 1, perPage = 10 } = req.query;
 
-  const locations = await Location.find();
+  const skip = (page - 1) * perPage;
 
-  console.log('Count:', locations.length);
+  const locationQuery = Location.find();
 
-  res.json(locations);
+  const [totalItems, locations] = await Promise.all([
+    locationQuery.clone().countDocuments(),
+    locationQuery.skip(skip).limit(perPage),
+  ]);
+
+  const totalPages = Math.ceil(totalItems / perPage);
+
+  res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    locations,
+  });
+
+
 };
 
 export const getLocationById = async (req, res) => {
@@ -37,6 +52,18 @@ export const deleteLocation = async (req, res) => {
 }
 
 export const updateLocation = async (req, res) => {
+  const { id } = req.params;
+  const location = await Location.findByIdAndUpdate({ _id: id },
+    req.body,
+    { returnDocument: 'after' },
+  );
+  if (!location) {
+    throw createHttpError(404, 'Локація не знайдена');
+  }
+  res.status(200).json(location);
+}
+
+export const patchLocation = async (req, res) => {
   const { id } = req.params;
   const location = await Location.findByIdAndUpdate({ _id: id },
     req.body,

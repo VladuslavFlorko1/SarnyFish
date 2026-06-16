@@ -1,4 +1,5 @@
 import { Joi, Segments } from 'celebrate';
+import { isValidObjectId } from 'mongoose';
 
 const FISH_TYPES = [
   'щука',
@@ -23,7 +24,42 @@ const FISH_TYPES = [
   'амур',
 ];
 
-const locationSchema = {
+const objectIdValidator  = (value, helpers) => {
+    return isValidObjectId(value) ? value : helpers.message('Невірний формат ObjectId');
+};
+
+export const updateLocationSchema = {
+  [Segments.PARAMS]: Joi.object({
+    id: Joi.string().custom(objectIdValidator).required(),
+  }),
+
+  [Segments.BODY]: Joi.object({
+    name: Joi.string().trim().min(3).max(18),
+
+    description: Joi.string().trim().min(10).max(200),
+
+    coordinates: Joi.object({
+      lat: Joi.number().min(50.3).max(52.2),
+      lng: Joi.number().min(24.8).max(27.3),
+    }),
+
+    fish: Joi.array()
+      .items(Joi.string().trim().valid(...FISH_TYPES))
+      .unique(),
+
+    city: Joi.string().trim().min(3).max(18),
+
+    type: Joi.string()
+      .trim()
+      .valid('річка', 'озеро', 'струмок', 'басейн', 'ставок', 'інше'),
+
+    images: Joi.array()
+      .items(Joi.string().trim().uri())
+      .min(1),
+  }).min(1),
+};
+
+export const locationSchema = {
   [Segments.BODY]: Joi.object({
     name: Joi.string().trim().required().min(3).max(18).messages({
       'string.base': 'Назва має бути рядком',
@@ -98,4 +134,10 @@ const locationSchema = {
   })
 };
 
-export default locationSchema;
+export const getLocationSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(1).max(100).default(10),
+  }),
+}
+

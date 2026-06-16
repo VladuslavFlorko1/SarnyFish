@@ -39,6 +39,15 @@ const locationSchema = new Schema(
       required: true,
       enum: ['річка', 'озеро', 'струмок', 'басейн','ставок', 'інше'],
     },
+    likes: {
+      count: {
+        type: Number,
+        default: 0,
+      },
+      users: {
+        type: [Schema.Types.ObjectId], ref: 'User'
+      },
+    },
   },
   {
     timestamps: true,

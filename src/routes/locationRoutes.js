@@ -1,18 +1,22 @@
 import { Router } from 'express';
-import { getLocations, getLocationById, createLocation, deleteLocation, updateLocation } from '../controllers/locationController.js';
+import { getLocations, getLocationById, createLocation, deleteLocation, updateLocation, patchLocation } from '../controllers/locationController.js';
 import { celebrate, Segments } from 'celebrate';
-import  locationSchema  from '../validations/localValidation.js';
+import {locationSchema,updateLocationSchema, getLocationSchema} from '../validations/localValidation.js';
+import { idValidationSchema } from '../validations/objectIdValidator.js';
+
 
 const localRouter = Router();
 
-localRouter.get('/locations', getLocations);
+localRouter.get('/locations',celebrate(getLocationSchema), getLocations);
 
-localRouter.get('/locations/:id', getLocationById);
+localRouter.get('/locations/:id',celebrate(idValidationSchema), getLocationById);
 
-localRouter.post('/locations', celebrate({ [Segments.BODY]: locationSchema }), createLocation);
+localRouter.post('/locations', celebrate( locationSchema ), createLocation);
 
-localRouter.delete('/locations/:id', deleteLocation);
+localRouter.delete('/locations/:id', celebrate(idValidationSchema), deleteLocation);
 
-localRouter.put('/locations/:id', updateLocation);
+localRouter.put('/locations/:id', celebrate(idValidationSchema), updateLocation);
+
+localRouter.patch('/locations/:id', celebrate(updateLocationSchema), patchLocation);
 
 export default localRouter;
