@@ -138,6 +138,20 @@ export const getLocationSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(1).max(100).default(10),
+
+    city: Joi.string().trim(),
+
+    type: Joi.string().valid(
+      'річка',
+      'озеро',
+      'струмок',
+      'басейн',
+      'ставок',
+      'інше'
+    ),
+
+    fish: Joi.string().trim().allow(""),
+    sort: Joi.string().valid('popular', 'newest'),
   }),
-}
+};
 

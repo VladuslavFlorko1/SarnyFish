@@ -2,28 +2,56 @@ import { Location } from '../models/local.js';
 import createHttpError from 'http-errors'
 
 export const getLocations = async (req, res) => {
-  const { page = 1, perPage = 10 } = req.query;
+  const {
+    page = 1,
+    perPage = 10,
+    city,
+    type,
+    fish,
+    sort
+  } = req.query;
 
   const skip = (page - 1) * perPage;
 
-  const locationQuery = Location.find();
+  const locationsQuery = Location.find();
+
+  if (city) {
+    locationsQuery.where({
+      city: { $regex: city, $options: 'i' },
+    });
+  }
+
+  if (type) {
+    locationsQuery.where('type').equals(type);
+  }
+
+  if (fish) {
+    const fishes = fish.split(',');
+
+    locationsQuery.where('fish').in(fishes);
+  }
+  if (sort === 'popular') {
+    locationsQuery.sort({ 'likes.count': -1 });
+  }
+
+  if (sort === 'newest') {
+    locationsQuery.sort({ createdAt: -1 });
+  }
 
   const [totalItems, locations] = await Promise.all([
-    locationQuery.clone().countDocuments(),
-    locationQuery.skip(skip).limit(perPage),
+    locationsQuery.clone().countDocuments(),
+    locationsQuery.skip(skip).limit(perPage),
   ]);
 
   const totalPages = Math.ceil(totalItems / perPage);
 
   res.status(200).json({
-    page,
-    perPage,
+    page: Number(page),
+    perPage: Number(perPage),
     totalItems,
     totalPages,
     locations,
   });
-
-
 };
 
 export const getLocationById = async (req, res) => {

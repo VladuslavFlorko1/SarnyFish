@@ -45,7 +45,8 @@ const locationSchema = new Schema(
         default: 0,
       },
       users: {
-        type: [Schema.Types.ObjectId], ref: 'User'
+        type: [Schema.Types.ObjectId],
+        ref: 'User'
       },
     },
   },
@@ -54,5 +55,8 @@ const locationSchema = new Schema(
     versionKey: false,
   }
 );
+
+locationSchema.index({ city: 1, type: 1, fish: 1 });
+
 
 export const Location = model('Location', locationSchema);
