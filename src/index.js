@@ -8,6 +8,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { logger } from './middlewares/logger.js';
 import localRouter from './routes/locationRoutes.js';
+import authRouter from './routes/authRouters.js';
 import { errors } from 'celebrate';
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.json({
 app.use(logger);
 
 app.use(localRouter);
+app.use(authRouter);
 
 app.use(errors());
 
