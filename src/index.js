@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 
 import { connectMongoDB } from './db/initMongoConnection.js';
@@ -16,9 +17,9 @@ const app = express();
 const PORT  = Number.parseInt(process.env.PORT, 10) || 3000;
 
 app.use(cors());
-app.use(express.json({
-  limit: '200kb',
-}));
+app.use(express.json({limit: '200kb',}));
+app.use(cookieParser());
+
 app.use(logger);
 
 app.use(localRouter);

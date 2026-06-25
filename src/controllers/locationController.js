@@ -66,39 +66,78 @@ export const getLocationById = async (req, res) => {
 }
 
 export const createLocation = async (req, res) => {
-  const location = await Location.create(req.body);
+  const location = await Location.create({
+    ...req.body,
+    owner: req.user._id,
+  });
+
   res.status(201).json(location);
-}
+};
 
 export const deleteLocation = async (req, res) => {
   const { id } = req.params;
-  const location = await Location.findByIdAndDelete(id);
+
+  const location = await Location.findOneAndDelete({
+    _id: id,
+    owner: req.user._id,
+  });
+
   if (!location) {
-    throw createHttpError(404, 'Локація не знайдена');
+    throw createHttpError(
+      404,
+      'Локацію не знайдено або у вас немає доступу',
+    );
   }
+
   res.status(200).json(location);
-}
+};
 
 export const updateLocation = async (req, res) => {
   const { id } = req.params;
-  const location = await Location.findByIdAndUpdate({ _id: id },
+
+  const location = await Location.findOneAndUpdate(
+    {
+      _id: id,
+      owner: req.user._id,
+    },
     req.body,
-    { returnDocument: 'after' },
+    {
+      new: true,
+      runValidators: true,
+    },
   );
+
   if (!location) {
-    throw createHttpError(404, 'Локація не знайдена');
+    throw createHttpError(
+      404,
+      'Локацію не знайдено або у вас немає доступу',
+    );
   }
+
   res.status(200).json(location);
-}
+};
 
 export const patchLocation = async (req, res) => {
   const { id } = req.params;
-  const location = await Location.findByIdAndUpdate({ _id: id },
+
+  const location = await Location.findOneAndUpdate(
+    {
+      _id: id,
+      owner: req.user._id,
+    },
     req.body,
-    { returnDocument: 'after' },
+    {
+      new: true,
+      runValidators: true,
+    },
   );
+
   if (!location) {
-    throw createHttpError(404, 'Локація не знайдена');
+    throw createHttpError(
+      404,
+      'Локацію не знайдено або у вас немає доступу',
+    );
   }
+
   res.status(200).json(location);
-}
+};
