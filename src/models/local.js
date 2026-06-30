@@ -49,10 +49,10 @@ const locationSchema = new Schema(
         type: Number,
         default: 0,
       },
-      users: {
-        type: [Schema.Types.ObjectId],
-        ref: 'User'
-      },
+    users: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    }],
     },
   },
   {
@@ -62,6 +62,7 @@ const locationSchema = new Schema(
 );
 
 locationSchema.index({ city: 1, type: 1, fish: 1 });
-
+locationSchema.index({ 'likes.count': -1 });
+locationSchema.index({ createdAt: -1 });
 
 export const Location = model('Location', locationSchema);

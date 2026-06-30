@@ -20,8 +20,33 @@ const usersShema = new Schema(
       required: true,
       trim: true,
     },
+    friends: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    }],
+    avatar: {
+      type: String,
+      default: null,
+    },
+    bio: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+      default: '',
+    },
+    resetPasswordToken: {
+      type: String,
+    },
+
+    resetPasswordExpiresAt: {
+      type: Date,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    versionKey: false
+   },
+
 );
 
 usersShema.methods.toJSON = function () {

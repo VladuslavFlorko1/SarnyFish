@@ -14,7 +14,7 @@ import { errors } from 'celebrate';
 
 const app = express();
 
-const PORT  = Number.parseInt(process.env.PORT, 10) || 3000;
+const PORT = Number.parseInt(process.env.PORT, 10) || 3000;
 
 app.use(cors());
 app.use(express.json({limit: '200kb',}));
@@ -26,6 +26,7 @@ app.use(localRouter);
 app.use(authRouter);
 
 app.use(errors());
+
 
 app.use(notFoundHandler);
 app.use(errorHandler);

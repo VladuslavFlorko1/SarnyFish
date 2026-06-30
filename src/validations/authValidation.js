@@ -45,3 +45,14 @@ export const registerSchema = {
     }),
   }),
 }
+
+export const requestResetEmailSchema = {
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().email().required().messages({
+      'string.base': 'Email має бути рядком',
+      'string.empty': 'Email не може бути пустим',
+      'string.email': 'Email повинен бути дійсною електронною адресою',
+      'any.required': 'Email є обовʼязковим',
+    }),
+  }),
+};
