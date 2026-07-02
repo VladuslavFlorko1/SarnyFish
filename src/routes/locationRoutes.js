@@ -4,6 +4,7 @@ import { celebrate, Segments } from 'celebrate';
 import {locationSchema,updateLocationSchema, getLocationSchema} from '../validations/localValidation.js';
 import { idValidationSchema } from '../validations/objectIdValidator.js';
 import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/multer.js';
 
 const localRouter = Router();
 
@@ -12,7 +13,7 @@ localRouter.get('/locations',celebrate(getLocationSchema), getLocations);
 
 localRouter.get('/locations/:id',celebrate(idValidationSchema), getLocationById);
 
-localRouter.post('/locations', authenticate, celebrate( locationSchema ), createLocation);
+localRouter.post('/locations',authenticate,upload.array('images', 10),celebrate(locationSchema),createLocation,);
 
 localRouter.delete('/locations/:id',authenticate, celebrate(idValidationSchema), deleteLocation);
 

@@ -1,5 +1,6 @@
 import { Location } from '../models/local.js';
 import createHttpError from 'http-errors'
+import { uploadToCloudinary } from '../services/uploadToCloudinary.js';
 
 export const getLocations = async (req, res) => {
   const {
@@ -66,9 +67,21 @@ export const getLocationById = async (req, res) => {
 }
 
 export const createLocation = async (req, res) => {
+  const imageUrls = await Promise.all(
+    req.files.map(async (file) => {
+      const result = await uploadToCloudinary(file.buffer, 'locations');
+      return result.secure_url;
+    })
+  );
+
   const location = await Location.create({
     ...req.body,
+    coordinates: {
+    lat: Number(req.body.lat),
+    lng: Number(req.body.lng),
+    },
     owner: req.user._id,
+    images: imageUrls,
   });
 
   res.status(201).json(location);

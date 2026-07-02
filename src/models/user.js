@@ -26,7 +26,7 @@ const usersShema = new Schema(
     }],
     avatar: {
       type: String,
-      default: null,
+      default: "https://res.cloudinary.com/dghwd7c3m/image/upload/v1782828518/62e9ba0691ba8f98b93e397fe14c47de_kldmk2.jpg",
     },
     bio: {
       type: String,

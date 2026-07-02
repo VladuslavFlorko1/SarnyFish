@@ -24,8 +24,10 @@ const FISH_TYPES = [
   'амур',
 ];
 
-const objectIdValidator  = (value, helpers) => {
-    return isValidObjectId(value) ? value : helpers.message('Невірний формат ObjectId');
+const objectIdValidator = (value, helpers) => {
+  return isValidObjectId(value)
+    ? value
+    : helpers.message('Невірний формат ObjectId');
 };
 
 export const updateLocationSchema = {
@@ -38,24 +40,20 @@ export const updateLocationSchema = {
 
     description: Joi.string().trim().min(10).max(200),
 
-    coordinates: Joi.object({
-      lat: Joi.number().min(50.3).max(52.2),
-      lng: Joi.number().min(24.8).max(27.3),
-    }),
+    lat: Joi.number().min(50.3).max(52.2),
 
-    fish: Joi.array()
-      .items(Joi.string().trim().valid(...FISH_TYPES))
-      .unique(),
+    lng: Joi.number().min(24.8).max(27.3),
+
+    fish: Joi.alternatives().try(
+      Joi.string().trim().valid(...FISH_TYPES),
+      Joi.array().items(Joi.string().trim().valid(...FISH_TYPES)).unique()
+    ),
 
     city: Joi.string().trim().min(3).max(18),
 
     type: Joi.string()
       .trim()
       .valid('річка', 'озеро', 'струмок', 'басейн', 'ставок', 'інше'),
-
-    images: Joi.array()
-      .items(Joi.string().trim().uri())
-      .min(1),
   }).min(1),
 };
 
@@ -75,32 +73,20 @@ export const locationSchema = {
       'string.max': 'Опис має бути не більше 200 символів',
     }),
 
-    coordinates: Joi.object({
-      lat: Joi.number().required().min(50.3).max(52.2).messages({
-        'number.base': 'Широта має бути числом',
-        'any.required': 'Широта є обовʼязковою',
-        'number.min': 'Широта має бути в межах Сарненського району',
-        'number.max': 'Широта має бути в межах Сарненського району',
-      }),
-
-      lng: Joi.number().required().min(24.8).max(27.3).messages({
-        'number.base': 'Довгота має бути числом',
-        'any.required': 'Довгота є обовʼязковою',
-        'number.min': 'Довгота має бути в межах Сарненського району',
-        'number.max': 'Довгота має бути в межах Сарненського району',
-      }),
-    }).required().messages({
-      'any.required': 'Координати є обовʼязковими',
+    lat: Joi.number().required().min(50.3).max(52.2).messages({
+      'number.base': 'Широта має бути числом',
+      'any.required': 'Широта є обовʼязковою',
     }),
 
-    fish: Joi.array()
-      .items(Joi.string().trim().valid(...FISH_TYPES))
-      .unique()
-      .messages({
-        'array.base': 'Риби повинні бути масивом',
-        'any.only': 'Вкажіть правильний вид риби',
-        'array.unique': 'Одна й та сама риба не може повторюватися',
-      }),
+    lng: Joi.number().required().min(24.8).max(27.3).messages({
+      'number.base': 'Довгота має бути числом',
+      'any.required': 'Довгота є обовʼязковою',
+    }),
+
+    fish: Joi.alternatives().try(
+      Joi.string().trim().valid(...FISH_TYPES),
+      Joi.array().items(Joi.string().trim().valid(...FISH_TYPES)).unique()
+    ),
 
     city: Joi.string().trim().required().min(3).max(18).messages({
       'string.base': 'Назва міста має бути рядком',
@@ -120,18 +106,7 @@ export const locationSchema = {
         'any.required': 'Тип локації є обовʼязковим',
         'any.only': 'Тип локації має бути одним із дозволених значень',
       }),
-
-    images: Joi.array()
-      .items(Joi.string().trim().uri())
-      .min(1)
-      .required()
-      .messages({
-        'array.base': 'Зображення мають бути масивом',
-        'array.min': 'Потрібно вказати хоча б одне зображення',
-        'any.required': 'Зображення є обовʼязковими',
-        'string.uri': 'Кожне зображення повинно бути валідним URL',
-      }),
-  })
+  }),
 };
 
 export const getLocationSchema = {
@@ -150,8 +125,8 @@ export const getLocationSchema = {
       'інше'
     ),
 
-    fish: Joi.string().trim().allow(""),
+    fish: Joi.string().trim().allow(''),
+
     sort: Joi.string().valid('popular', 'newest'),
   }),
 };
-
