@@ -42,23 +42,30 @@ const locationSchema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: ['річка', 'озеро', 'струмок', 'басейн','ставок', 'інше'],
+      enum: ['річка', 'озеро', 'струмок', 'басейн', 'ставок', 'інше'],
+    },
+    commentsCount: {
+      type: Number,
+      default: 0,
     },
     likes: {
       count: {
         type: Number,
         default: 0,
       },
-    users: [{
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    }],
+      users: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      ],
+      default: [],
     },
   },
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
 locationSchema.index({ city: 1, type: 1, fish: 1 });

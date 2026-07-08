@@ -154,3 +154,29 @@ export const patchLocation = async (req, res) => {
 
   res.status(200).json(location);
 };
+
+export const toggleLike = async (req, res) => {
+  const { id } = req.params;
+
+  const location = await Location.findById(id);
+
+  if (!location) {
+    throw createHttpError(404, "Локацію не знайдено");
+  }
+
+  const alreadyLiked = location.likes.users.some((userId) =>
+    userId.equals(req.user._id)
+  );
+
+  if (alreadyLiked) {
+    location.likes.users.pull(req.user._id);
+    location.likes.count -= 1;
+  } else {
+    location.likes.users.push(req.user._id);
+    location.likes.count += 1;
+  }
+
+  await location.save();
+
+  res.status(200).json(location.likes);
+};

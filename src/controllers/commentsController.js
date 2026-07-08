@@ -1,5 +1,6 @@
 import createHttpError from "http-errors";
 import { Comment } from "../models/comment.js";
+import { Location } from "../models/local.js";
 
 export const getCommentsByLocation = async (req, res) => {
   const { locationId } = req.params;
@@ -19,6 +20,10 @@ export const createComment = async (req, res) => {
     text,
     location: locationId,
     author: req.user._id,
+  });
+
+  await Location.findByIdAndUpdate(locationId, {
+    $inc: { commentsCount: 1 },
   });
 
   res.status(201).json(comment);
@@ -56,6 +61,9 @@ export const deleteComment = async (req, res) => {
   if (comment.author.toString() !== req.user._id.toString()) {
     throw createHttpError(403, "Недостатньо прав");
   }
+  await Location.findByIdAndUpdate(comment.location, {
+  $inc: { commentsCount: -1 },
+  });
 
   await comment.deleteOne();
 
