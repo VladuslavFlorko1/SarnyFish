@@ -14,7 +14,10 @@ export const getLocations = async (req, res) => {
 
   const skip = (page - 1) * perPage;
 
-  const locationsQuery = Location.find();
+const locationsQuery = Location.find().populate(
+  "owner",
+  "username avatar"
+);
 
   if (city) {
     locationsQuery.where({
@@ -175,7 +178,6 @@ export const toggleLike = async (req, res) => {
     location.likes.users.push(req.user._id);
     location.likes.count += 1;
   }
-
   await location.save();
 
   res.status(200).json(location.likes);
