@@ -1,6 +1,6 @@
 import { Joi, Segments } from 'celebrate';
 
-const usernamePattern = /^[a-zA-Z0-9_ ]+$/;
+const usernamePattern = /^[a-zA-Zа-яА-ЯіІїЇєЄґҐ0-9_ ]+$/;
 
 export const loginSchema = {
   [Segments.BODY]: Joi.object({
@@ -29,7 +29,7 @@ export const registerSchema = {
       'string.min': 'Імʼя користувача має бути не менше 3 символів',
       'string.max': 'Імʼя користувача має бути не більше 18 символів',
       'any.required': 'Імʼя користувача є обовʼязковим',
-      'string.pattern.base': 'Імʼя користувача може містити лише літери, цифри, пробіли та підкреслення',
+      'string.pattern.base': 'Імʼя користувача може містити лише літери (укр/лат), цифри, пробіли та підкреслення',
     }),
 
     email: Joi.string().trim().email().required().lowercase().messages({
