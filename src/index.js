@@ -21,7 +21,10 @@ const app = express();
 
 const PORT = Number.parseInt(process.env.PORT, 10) || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000"],
+  credentials: true,
+}));
 app.use(express.json({limit: '200kb',}));
 app.use(cookieParser());
 
