@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import friendRouter from './routes/friendRoutes.js';
 
 
 import { connectMongoDB } from './db/initMongoConnection.js';
@@ -34,6 +35,7 @@ app.use(userRouter);
 app.use(localRouter);
 app.use(authRouter);
 app.use(commentsRouter);
+app.use(friendRouter);
 
 app.use(errors());
 
