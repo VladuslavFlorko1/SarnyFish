@@ -9,15 +9,16 @@ export const getLocations = async (req, res) => {
     city,
     type,
     fish,
+    owner,
     sort
   } = req.query;
 
   const skip = (page - 1) * perPage;
 
-const locationsQuery = Location.find().populate(
-  "owner",
-  "username avatar"
-);
+  const locationsQuery = Location.find().populate(
+    "owner",
+    "username avatar"
+  );
 
   if (city) {
     locationsQuery.where({
@@ -31,9 +32,13 @@ const locationsQuery = Location.find().populate(
 
   if (fish) {
     const fishes = fish.split(',');
-
     locationsQuery.where('fish').in(fishes);
   }
+
+  if (owner) {
+    locationsQuery.where('owner').equals(owner);
+  }
+
   if (sort === 'popular') {
     locationsQuery.sort({ 'likes.count': -1 });
   }

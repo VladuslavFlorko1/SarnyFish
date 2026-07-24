@@ -127,6 +127,8 @@ export const getLocationSchema = {
 
     fish: Joi.string().trim().allow(''),
 
+    owner: Joi.string().custom(objectIdValidator),
+
     sort: Joi.string().valid('popular', 'newest'),
   }),
 };
