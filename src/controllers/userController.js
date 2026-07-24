@@ -2,6 +2,10 @@ import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
 import { uploadToCloudinary } from '../services/uploadToCloudinary.js';
 
+export const getCurrentUser = async (req, res) => {
+  res.status(200).json({ user: req.user });
+};
+
 export const updateUserAvatar = async (req, res) => {
   if (!req.file) {
     throw createHttpError(400, 'Файл аватара не надано');
