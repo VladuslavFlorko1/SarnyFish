@@ -66,7 +66,10 @@ export const getLocations = async (req, res) => {
 export const getLocationById = async (req, res) => {
   const { id } = req.params;
 
-  const location = await Location.findById(id);
+  const location = await Location.findById(id).populate(
+    "owner",
+    "username avatar"
+  );
 
   if (!location) {
     throw createHttpError(404, 'Локація не знайдена');
