@@ -54,12 +54,20 @@ export const getLocations = async (req, res) => {
 
   const totalPages = Math.ceil(totalItems / perPage);
 
+  const locationsWithLikeStatus = locations.map((location) => {
+    const obj = location.toObject();
+    obj.isLiked = req.user
+      ? location.likes.users.some((userId) => userId.equals(req.user._id))
+      : false;
+    return obj;
+  });
+
   res.status(200).json({
     page: Number(page),
     perPage: Number(perPage),
     totalItems,
     totalPages,
-    locations,
+    locations: locationsWithLikeStatus,
   });
 };
 
@@ -74,7 +82,13 @@ export const getLocationById = async (req, res) => {
   if (!location) {
     throw createHttpError(404, 'Локація не знайдена');
   }
-  res.status(200).json(location);
+
+  const obj = location.toObject();
+  obj.isLiked = req.user
+    ? location.likes.users.some((userId) => userId.equals(req.user._id))
+    : false;
+
+  res.status(200).json(obj);
 }
 
 export const createLocation = async (req, res) => {

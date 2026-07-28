@@ -5,6 +5,7 @@ import {locationSchema,updateLocationSchema, getLocationSchema} from '../validat
 import { idValidationSchema } from '../validations/objectIdValidator.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
+import { optionalAuthenticate } from '../middlewares/optionalAuthenticate.js';
 
 const localRouter = Router();
 
@@ -21,6 +22,10 @@ localRouter.put('/locations/:id',authenticate, celebrate(idValidationSchema), up
 
 localRouter.patch('/locations/:id', authenticate, celebrate(updateLocationSchema), patchLocation);
 
-localRouter.patch("/locations/:id/like",authenticate,celebrate(idValidationSchema),toggleLike);
+localRouter.patch("/locations/:id/like", authenticate, celebrate(idValidationSchema), toggleLike);
+
+localRouter.get('/locations', optionalAuthenticate, celebrate(getLocationSchema), getLocations);
+
+localRouter.get('/locations/:id', optionalAuthenticate, celebrate(idValidationSchema), getLocationById);
 
 export default localRouter;
