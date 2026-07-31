@@ -23,7 +23,7 @@ const app = express();
 const PORT = Number.parseInt(process.env.PORT, 10) || 3000;
 
 app.use(cors({
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", "https://sarny-fish-website.vercel.app"],
   credentials: true,
 }));
 app.use(express.json({limit: '200kb',}));
