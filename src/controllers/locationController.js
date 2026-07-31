@@ -157,18 +157,9 @@ export const updateLocation = async (req, res) => {
 
 export const patchLocation = async (req, res) => {
   const { id } = req.params;
+  const { removeImages, lat, lng, ...rest } = req.body;
 
-  const location = await Location.findOneAndUpdate(
-    {
-      _id: id,
-      owner: req.user._id,
-    },
-    req.body,
-    {
-      new: true,
-      runValidators: true,
-    },
-  );
+  const location = await Location.findOne({ _id: id, owner: req.user._id });
 
   if (!location) {
     throw createHttpError(
@@ -177,7 +168,46 @@ export const patchLocation = async (req, res) => {
     );
   }
 
-  res.status(200).json(location);
+  let updatedImages = location.images;
+
+  if (removeImages) {
+    const toRemove = Array.isArray(removeImages) ? removeImages : [removeImages];
+    updatedImages = updatedImages.filter((img) => !toRemove.includes(img));
+  }
+
+  if (req.files && req.files.length > 0) {
+    const newImageUrls = await Promise.all(
+      req.files.map(async (file) => {
+        const result = await uploadToCloudinary(file.buffer, 'locations');
+        return result.secure_url;
+      })
+    );
+    updatedImages = [...updatedImages, ...newImageUrls];
+  }
+
+  if (updatedImages.length > 10) {
+    throw createHttpError(400, 'Максимум 10 фотографій на локацію');
+  }
+
+  if (updatedImages.length === 0) {
+    throw createHttpError(400, 'Локація повинна мати хоча б одне фото');
+  }
+
+  const updateData = { ...rest, images: updatedImages };
+
+  if (lat !== undefined || lng !== undefined) {
+    updateData.coordinates = {
+      lat: lat !== undefined ? Number(lat) : location.coordinates.lat,
+      lng: lng !== undefined ? Number(lng) : location.coordinates.lng,
+    };
+  }
+
+  const updatedLocation = await Location.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  }).populate('owner', 'username avatar');
+
+  res.status(200).json(updatedLocation);
 };
 
 export const toggleLike = async (req, res) => {

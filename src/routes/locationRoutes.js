@@ -19,7 +19,8 @@ localRouter.delete('/locations/:id', authenticate, celebrate(idValidationSchema)
 
 localRouter.put('/locations/:id', authenticate, celebrate(idValidationSchema), updateLocation);
 
-localRouter.patch('/locations/:id', authenticate, celebrate(updateLocationSchema), patchLocation);
+localRouter.patch('/locations/:id',authenticate,upload.array('images', 10),celebrate(updateLocationSchema),patchLocation
+);
 
 localRouter.patch('/locations/:id/like', authenticate, celebrate(idValidationSchema), toggleLike);
 

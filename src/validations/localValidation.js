@@ -54,6 +54,11 @@ export const updateLocationSchema = {
     type: Joi.string()
       .trim()
       .valid('річка', 'озеро', 'струмок', 'басейн', 'ставок', 'інше'),
+
+    removeImages: Joi.alternatives().try(
+      Joi.string(),
+      Joi.array().items(Joi.string())
+    ),
   }).min(1),
 };
 
