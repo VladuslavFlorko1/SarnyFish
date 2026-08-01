@@ -59,3 +59,29 @@ export const requestResetEmailSchema = {
     }),
   }),
 };
+
+export const verifyEmailSchema = {
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().trim().email().required().lowercase().messages({
+      'string.empty': 'Email не може бути пустим',
+      'string.email': 'Email повинен бути дійсною електронною адресою',
+      'any.required': 'Email є обовʼязковим',
+    }),
+    code: Joi.string().trim().length(6).pattern(/^\d+$/).required().messages({
+      'string.empty': 'Код не може бути пустим',
+      'string.length': 'Код має складатися з 6 цифр',
+      'string.pattern.base': 'Код має містити лише цифри',
+      'any.required': 'Код є обовʼязковим',
+    }),
+  }),
+};
+
+export const resendVerificationSchema = {
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().trim().email().required().lowercase().messages({
+      'string.empty': 'Email не може бути пустим',
+      'string.email': 'Email повинен бути дійсною електронною адресою',
+      'any.required': 'Email є обовʼязковим',
+    }),
+  }),
+};

@@ -92,6 +92,10 @@ export const getLocationById = async (req, res) => {
 }
 
 export const createLocation = async (req, res) => {
+  if (!req.user.isVerified) {
+    throw createHttpError(403, 'Підтвердіть email, щоб додавати локації');
+  }
+
   const imageUrls = await Promise.all(
     req.files.map(async (file) => {
       const result = await uploadToCloudinary(file.buffer, 'locations');
@@ -102,8 +106,8 @@ export const createLocation = async (req, res) => {
   const location = await Location.create({
     ...req.body,
     coordinates: {
-    lat: Number(req.body.lat),
-    lng: Number(req.body.lng),
+      lat: Number(req.body.lat),
+      lng: Number(req.body.lng),
     },
     owner: req.user._id,
     images: imageUrls,
