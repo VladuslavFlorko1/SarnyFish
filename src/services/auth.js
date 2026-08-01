@@ -17,23 +17,27 @@ export const createSession = async (userId) => {
 };
 
 export const setSessionCookies = (res, sesseon) => {
+  const cookieDomain = process.env.NODE_ENV === "production" ? ".sarnyfish.com" : undefined;
+
   res.cookie("accessToken", sesseon.accessToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "lax",
+    domain: cookieDomain,
     maxAge: ACCESS_TOKEN_LIFETIME,
   });
   res.cookie("refreshToken", sesseon.refreshToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "lax",
+    domain: cookieDomain,
     maxAge: REFRESH_TOKEN_LIFETIME,
   });
   res.cookie("sessionId", sesseon._id, {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "lax",
+    domain: cookieDomain,
     maxAge: REFRESH_TOKEN_LIFETIME,
   });
 }
-

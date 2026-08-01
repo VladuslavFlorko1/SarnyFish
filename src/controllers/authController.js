@@ -60,9 +60,11 @@ export const logoutUser = async (req, res) => {
     await Session.findByIdAndDelete(sessionId);
   }
 
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
-  res.clearCookie('sessionId');
+  const cookieDomain = process.env.NODE_ENV === "production" ? ".sarnyfish.com" : undefined;
+
+  res.clearCookie('accessToken', { domain: cookieDomain });
+  res.clearCookie('refreshToken', { domain: cookieDomain });
+  res.clearCookie('sessionId', { domain: cookieDomain });
   res.status(204).send();
 };
 
