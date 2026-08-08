@@ -45,8 +45,16 @@ export const updateLocationSchema = {
     lng: Joi.number().min(24.8).max(27.3),
 
     fish: Joi.alternatives().try(
-      Joi.string().trim().valid(...FISH_TYPES),
-      Joi.array().items(Joi.string().trim().valid(...FISH_TYPES)).unique()
+      Joi.string()
+        .trim()
+        .valid(...FISH_TYPES),
+      Joi.array()
+        .items(
+          Joi.string()
+            .trim()
+            .valid(...FISH_TYPES),
+        )
+        .unique(),
     ),
 
     city: Joi.string().trim().min(3).max(18),
@@ -57,7 +65,7 @@ export const updateLocationSchema = {
 
     removeImages: Joi.alternatives().try(
       Joi.string(),
-      Joi.array().items(Joi.string())
+      Joi.array().items(Joi.string()),
     ),
   }).min(1),
 };
@@ -74,6 +82,7 @@ export const locationSchema = {
 
     description: Joi.string().trim().min(10).max(200).messages({
       'string.base': 'Опис має бути рядком',
+      'string.empty': 'Опис не може бути порожнім, якщо вказаний',
       'string.min': 'Опис має бути не менше 10 символів',
       'string.max': 'Опис має бути не більше 200 символів',
     }),
@@ -89,8 +98,16 @@ export const locationSchema = {
     }),
 
     fish: Joi.alternatives().try(
-      Joi.string().trim().valid(...FISH_TYPES),
-      Joi.array().items(Joi.string().trim().valid(...FISH_TYPES)).unique()
+      Joi.string()
+        .trim()
+        .valid(...FISH_TYPES),
+      Joi.array()
+        .items(
+          Joi.string()
+            .trim()
+            .valid(...FISH_TYPES),
+        )
+        .unique(),
     ),
 
     city: Joi.string().trim().required().min(3).max(18).messages({
@@ -127,7 +144,7 @@ export const getLocationSchema = {
       'струмок',
       'басейн',
       'ставок',
-      'інше'
+      'інше',
     ),
 
     fish: Joi.string().trim().allow(''),
