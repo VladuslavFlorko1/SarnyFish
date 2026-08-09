@@ -31,6 +31,10 @@ app.use(cookieParser());
 
 app.use(logger);
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.use(userRouter);
 app.use(localRouter);
 app.use(authRouter);
