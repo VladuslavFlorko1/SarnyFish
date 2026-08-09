@@ -6,6 +6,7 @@ import {
   updateUserAvatar,
   getCurrentUser,
   getUserById,
+  searchUsers,
 } from '../controllers/userController.js';
 import { upload } from '../middlewares/multer.js';
 
@@ -21,9 +22,17 @@ const userIdParamSchema = {
   }),
 };
 
+const searchQuerySchema = {
+  [Segments.QUERY]: Joi.object({
+    q: Joi.string().trim().allow(''),
+  }),
+};
+
 const userRouter = Router();
 
 userRouter.get('/users/me', authenticate, getCurrentUser);
+
+userRouter.get('/users/search', authenticate, celebrate(searchQuerySchema), searchUsers);
 
 userRouter.get(
   '/users/:id',
