@@ -1,6 +1,7 @@
 import { Location } from '../models/local.js';
 import createHttpError from 'http-errors'
 import { uploadToCloudinary } from '../services/uploadToCloudinary.js';
+import { Notification } from '../models/notification.js';
 
 export const getLocations = async (req, res) => {
   const {
@@ -233,6 +234,15 @@ export const toggleLike = async (req, res) => {
   } else {
     location.likes.users.push(req.user._id);
     location.likes.count += 1;
+
+    if (location.owner.toString() !== req.user._id.toString()) {
+      await Notification.create({
+        recipient: location.owner,
+        sender: req.user._id,
+        type: 'like',
+        location: location._id,
+      });
+    }
   }
   await location.save();
 

@@ -14,6 +14,7 @@ import userRouter from './routes/userRouter.js';
 import localRouter from './routes/locationRoutes.js';
 import authRouter from './routes/authRouters.js';
 import commentsRouter from './routes/commentsRouter.js';
+import notificationRouter from './routes/notificationRoutes.js';
 
 import { errors } from 'celebrate';
 
@@ -40,6 +41,7 @@ app.use(localRouter);
 app.use(authRouter);
 app.use(commentsRouter);
 app.use(friendRouter);
+app.use(notificationRouter);
 
 app.use(errors());
 

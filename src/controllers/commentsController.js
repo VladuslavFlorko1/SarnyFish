@@ -1,6 +1,8 @@
 import createHttpError from "http-errors";
 import { Comment } from "../models/comment.js";
 import { Location } from "../models/local.js";
+import { Notification } from '../models/notification.js';
+
 
 export const getCommentsByLocation = async (req, res) => {
   const { locationId } = req.params;
@@ -22,9 +24,18 @@ export const createComment = async (req, res) => {
     author: req.user._id,
   });
 
-  await Location.findByIdAndUpdate(locationId, {
+  const location = await Location.findByIdAndUpdate(locationId, {
     $inc: { commentsCount: 1 },
   });
+
+  if (location && location.owner.toString() !== req.user._id.toString()) {
+    await Notification.create({
+      recipient: location.owner,
+      sender: req.user._id,
+      type: 'comment',
+      location: locationId,
+    });
+  }
 
   res.status(201).json(comment);
 };

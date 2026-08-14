@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
 import { FriendRequest } from '../models/friendRequest.js';
+import { Notification } from '../models/notification.js';
 
 export const sendFriendRequest = async (req, res) => {
   const fromId = req.user._id;
@@ -35,6 +36,12 @@ export const sendFriendRequest = async (req, res) => {
   }
 
   const request = await FriendRequest.create({ from: fromId, to: toId });
+
+  await Notification.create({
+    recipient: toId,
+    sender: fromId,
+    type: 'friend_request',
+  });
 
   res.status(201).json({ request });
 };
@@ -78,6 +85,12 @@ export const acceptFriendRequest = async (req, res) => {
   });
   await User.findByIdAndUpdate(request.to, {
     $addToSet: { friends: request.from },
+  });
+
+  await Notification.create({
+    recipient: request.from,
+    sender: request.to,
+    type: 'friend_accept',
   });
 
   res.status(200).json({ message: 'Запит прийнято' });
